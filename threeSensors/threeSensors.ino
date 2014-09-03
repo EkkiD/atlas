@@ -49,15 +49,12 @@ void loop() {
  long dist2 = dur2/59;
  long dist3 = dur3/59;
 
-Serial.print("S1: ");
 Serial.print(dist1);
-Serial.println();
-Serial.print("S2: ");
+Serial.print("|");
 Serial.print(dist2);
-Serial.println();
-Serial.print("S3: ");
+Serial.print("|");
 Serial.print(dist3);
 Serial.println();
 
-delay(1000); // delay for 1/10 of a second
+delay(100); // delay for 1/10 of a second
 }
