@@ -6,25 +6,42 @@ from StringIO import StringIO
 from urllib2 import urlopen
 from collections import deque
 
+DISTANCE_THRESHOLD = 20
+READING_THRESHOLD = 5
+
+
+def alleq(iterable):
+    return len(set(iterable)) <= 1
+
 
 class Application(object):
     def __init__(self, master=None):
         self.frame = tk.Tk(master)
         self.createImage()
+
         self.serialInput = serial.Serial('/dev/ttyUSB0', 9600) # Establish the connection on a specific port
 
-        self.selections = deque(maxlen=3)
-        self.selectedImage = 1
+        self.readings = [deque(maxlen=READING_THRESHOLD),
+                         deque(maxlen=READING_THRESHOLD),
+                         deque(maxlen=READING_THRESHOLD)]
+
+        self.state = [False, False, False]
+        self.imageIdx = 0
 
     def createImage(self):
-        urlprefix = 'http://placekitten.com/'
-        url1 = urlprefix + '960/540'
-        url2 = urlprefix + '1920/1080'
-        print url1
-        print url2
-        self.rawImage1 = Image.open(StringIO(urlopen(url1).read()))
-        self.rawImage2 = Image.open(StringIO(urlopen(url2).read()))
-        self.tkImage = ImageTk.PhotoImage(self.rawImage1)
+        files = [  
+                  'image0.gif',
+                  'image1.jpg',
+                  'image2.jpg',
+                  'image3.jpg',
+                  'image4.jpg',
+                  'image5.jpg',
+                  'image6.jpg',
+                  'image7.jpg',
+               ]
+        self.rawImages = map(lambda f: Image.open(f), files)
+
+        self.tkImage = ImageTk.PhotoImage(self.rawImages[0])
         self.panel = tk.Label(self.frame, image=self.tkImage)
         self.panel.pack()
 
@@ -35,20 +52,24 @@ class Application(object):
             return
 
         distances = map(lambda x: int(x), results.split('|'))
-        average = sum(distances) / len(distances)
-        self.selections.append(2 if average < 50 else 1)
-        
-        if (len(set(self.selections)) == 1):
-            self.selectedImage = self.selections[0]
 
+        for i, distance in enumerate(distances):
+            reading = True if distance < DISTANCE_THRESHOLD else False
+            self.readings[i].append(reading)
+
+            if alleq(self.readings[i]):
+                self.state[i] = self.readings[i][0]
+
+        self.imageIdx = 1 if self.state[0] else 0
+        self.imageIdx +=  2 if self.state[1] else 0
+        self.imageIdx +=  4 if self.state[2] else 0
 
     def update(self):
-
         self.evaluateResults()
 
-        imageToUse = self.rawImage1 if self.selectedImage == 1 else self.rawImage2
+        print self.imageIdx
+        imageToUse = self.rawImages[self.imageIdx]
 
-        print self.frame.winfo_width(), self.frame.winfo_height()
         self.rawImage = imageToUse.resize((self.frame.winfo_width(), self.frame.winfo_height()))
         self.tkImage = ImageTk.PhotoImage(self.rawImage)
         self.panel.configure(image = self.tkImage)
