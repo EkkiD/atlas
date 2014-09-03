@@ -4,6 +4,7 @@ import serial
 import re
 from StringIO import StringIO
 from urllib2 import urlopen
+from collections import deque
 
 
 class Application(object):
@@ -11,6 +12,8 @@ class Application(object):
         self.frame = tk.Tk(master)
         self.createImage()
         self.serialInput = serial.Serial('/dev/ttyUSB0', 9600) # Establish the connection on a specific port
+
+        self.selections = deque(maxlen=3)
         self.selectedImage = 1
 
     def createImage(self):
@@ -33,8 +36,10 @@ class Application(object):
 
         distances = map(lambda x: int(x), results.split('|'))
         average = sum(distances) / len(distances)
+        self.selections.append(2 if average < 50 else 1)
         
-        self.selectedImage =  2 if average < 50 else 1
+        if (len(set(self.selections)) == 1):
+            self.selectedImage = self.selections[0]
 
 
     def update(self):
