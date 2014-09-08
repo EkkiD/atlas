@@ -17,9 +17,15 @@ def alleq(iterable):
 class Application(object):
     def __init__(self, master=None):
         self.frame = tk.Tk(master)
+        
+        self.frame.attributes("-toolwindow", 1)
+        self.frame.attributes("-fullscreen", True)
+        self.frame.bind("<Escape>", self.destroy)
+
+
         self.createImage()
 
-        self.serialInput = serial.Serial('/dev/ttyUSB0', 9600) # Establish the connection on a specific port
+        self.serialInput = serial.Serial('COM4', 9600) # Establish the connection on a specific port
 
         self.readings = [deque(maxlen=READING_THRESHOLD),
                          deque(maxlen=READING_THRESHOLD),
@@ -27,6 +33,10 @@ class Application(object):
 
         self.state = [False, False, False]
         self.imageIdx = 0
+
+    def destroy(self, e):
+        self.frame.destroy()
+        exit(0)
 
     def createImage(self):
         files = [  
