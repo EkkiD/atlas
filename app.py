@@ -7,7 +7,7 @@ from urllib2 import urlopen
 from collections import deque
 
 DISTANCE_THRESHOLD = 20
-READING_THRESHOLD = 5
+READING_THRESHOLD = 2
 
 
 def alleq(iterable):
@@ -58,6 +58,7 @@ class Application(object):
     def evaluateResults(self):
         requirement = '\d+|\d+|\d+'
         results = self.serialInput.readline() # Read the newest output from the Arduino
+        print results
         if not re.match(requirement, results):
             return
 
@@ -84,7 +85,7 @@ class Application(object):
         self.tkImage = ImageTk.PhotoImage(self.rawImage)
         self.panel.configure(image = self.tkImage)
 
-        self.frame.after(100, self.update)
+        self.frame.after(50, self.update)
 
 
     def mainloop(self):

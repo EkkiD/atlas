@@ -27,21 +27,21 @@ void loop() {
  delayMicroseconds(2);
  digitalWrite(trig1, HIGH);
  delayMicroseconds(10);
- digitalWrite(trig1, HIGH);
+ digitalWrite(trig1, LOW);
  long dur1 = pulseIn(echo1, HIGH);
 
  digitalWrite(trig2, LOW);
  delayMicroseconds(2);
  digitalWrite(trig2, HIGH);
  delayMicroseconds(10);
- digitalWrite(trig2, HIGH);
+ digitalWrite(trig2, LOW);
  long dur2 = pulseIn(echo2, HIGH);
 
  digitalWrite(trig3, LOW);
  delayMicroseconds(2);
  digitalWrite(trig3, HIGH);
  delayMicroseconds(10);
- digitalWrite(trig3, HIGH);
+ digitalWrite(trig3, LOW);
  long dur3 = pulseIn(echo3, HIGH);
 
  //Calculate the distance (in cm) based on the speed of sound.
@@ -56,5 +56,5 @@ Serial.print("|");
 Serial.print(dist3);
 Serial.println();
 
-delay(100); // delay for 1/10 of a second
+delay(500); // delay for 1/10 of a second
 }
