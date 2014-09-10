@@ -6,8 +6,8 @@ from StringIO import StringIO
 from urllib2 import urlopen
 from collections import deque
 
-DISTANCE_THRESHOLD = 20
-READING_THRESHOLD = 2
+DISTANCE_THRESHOLD = 100
+READING_THRESHOLD = 1
 
 
 def alleq(iterable):
