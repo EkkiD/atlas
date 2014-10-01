@@ -25,7 +25,7 @@ class Application(object):
 
         self.createImage()
 
-        self.serialInput = serial.Serial('COM4', 9600) # Establish the connection on a specific port
+        self.serialInput = serial.Serial('COM5', 9600) # Establish the connection on a specific port
 
         self.readings = [deque(maxlen=READING_THRESHOLD),
                          deque(maxlen=READING_THRESHOLD),
