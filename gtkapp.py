@@ -4,11 +4,15 @@ import re
 from collections import deque
 
 DISTANCE_THRESHOLD = 100
-READING_THRESHOLD = 1
+READING_THRESHOLD = 6
 
 
 def alleq(iterable):
     return len(set(iterable)) <= 1
+
+def oneof(iterable):
+    print len([i for i in iterable if i]) > 0
+    return len([i for i in iterable if i]) > 0
 
 
 class Application(Gtk.Window):
@@ -26,14 +30,16 @@ class Application(Gtk.Window):
         self.readings = [deque(maxlen=READING_THRESHOLD),
                          deque(maxlen=READING_THRESHOLD),
                          deque(maxlen=READING_THRESHOLD)]
-        self.r2 = '80|80|80'
+
+        #self.serialInput = serial.Serial('COM5', 9600) # Establish the connection on a specific port
+        self.r2 = '80|70|70'
 
         self.state = [False, False, False]
         self.imageIdx = 0
 
         self.is_full = False
 
-        GLib.timeout_add(50, self.update)
+        GLib.timeout_add(500, self.update)
 
 
     def change(self):
@@ -90,8 +96,7 @@ class Application(Gtk.Window):
             reading = True if distance < DISTANCE_THRESHOLD else False
             self.readings[i].append(reading)
 
-            if alleq(self.readings[i]):
-                self.state[i] = self.readings[i][0]
+            self.state[i] = oneof(self.readings[i])
 
         self.imageIdx = 1 if self.state[0] else 0
         self.imageIdx +=  2 if self.state[1] else 0
